@@ -3,6 +3,7 @@ on:
   push:
     branches:
     - master
+    - json-validator-test
   pull_request:
     branches:
     - master
@@ -43,6 +44,12 @@ jobs:
           tools/bootstrap/python -m dmi.test
           tools/bootstrap/python -m mapmerge2.dmm_test
           ~/dreamchecker > ${GITHUB_WORKSPACE}/output-annotations.txt 2>&1
+      - name: Validate Map Configs
+        uses: snapcart/json-schema-validator@v1.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          json_schema: ./_maps/ship_config_schema.json
+          json_path_pattern: ./_maps/configs/(.+).json
       - name: Annotate Regex Matches
         if: always()
         run: |
